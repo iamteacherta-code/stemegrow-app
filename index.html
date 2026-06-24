@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STEM–GROW Model · ระบบจัดการงานวิจัยเพื่อ คศ.4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDF1ED; --panel:#fff; --ink:#16271F; --ink-soft:#4C5E54;
+    --green:#1A6B4C; --green-d:#11543B; --green-l:#E1EFE7;
+    --gold:#B6852C; --gold-l:#F6EEDB;
+    --ok:#1F7A52; --warn:#C7882B; --bad:#C0473B; --info:#2C6E8F;
+    --line:#D6DED9; --line-soft:#E6ECE8;
+    --shadow:0 1px 2px rgba(16,39,31,.06),0 8px 24px rgba(16,39,31,.07);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:"IBM Plex Sans Thai",sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.55;-webkit-text-size-adjust:100%}
+  h1,h2,h3{font-family:"Chakra Petch",sans-serif;font-weight:600;letter-spacing:.2px;margin:0}
+  .num{font-family:"Chakra Petch",sans-serif;font-variant-numeric:tabular-nums}
+  button{font-family:inherit;cursor:pointer}
+  input,select,textarea{font-family:inherit;font-size:14px;color:var(--ink)}
+
+  header{position:sticky;top:0;z-index:30;background:var(--ink);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 14px rgba(16,39,31,.25)}
+  .brand{display:flex;align-items:center;gap:10px;min-width:0}
+  .badge{font-family:"Chakra Petch";font-weight:700;background:var(--gold);color:#2a1d04;padding:3px 9px;border-radius:6px;font-size:13px;letter-spacing:.5px;flex:none}
+  .brand h1{font-size:15px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .brand small{display:block;font-weight:400;font-family:"IBM Plex Sans Thai";color:#9fb8ab;font-size:11px}
+  header .spacer{flex:1}
+  .savechip{font-size:11.5px;color:#9fb8ab;display:flex;align-items:center;gap:6px;white-space:nowrap}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(31,122,82,.25)}
+  .hbtn{background:rgba(255,255,255,.10);color:#fff;border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:7px 11px;font-size:13px}
+  .hbtn:hover{background:rgba(255,255,255,.18)}
+
+  nav{position:sticky;top:54px;z-index:25;background:var(--paper);border-bottom:1px solid var(--line);display:flex;gap:4px;padding:8px 10px;overflow-x:auto}
+  nav::-webkit-scrollbar{display:none}
+  .tab{flex:none;background:transparent;border:1px solid transparent;border-radius:9px;padding:8px 13px;color:var(--ink-soft);font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:7px;white-space:nowrap}
+  .tab .tn{font-family:"Chakra Petch";font-size:11px;color:var(--green);opacity:.7}
+  .tab.active{background:var(--panel);color:var(--ink);border-color:var(--line);box-shadow:var(--shadow);font-weight:600}
+  .tab.active .tn{opacity:1}
+
+  main{max-width:1100px;margin:0 auto;padding:18px 14px 70px}
+  .page{display:none}.page.show{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow);margin-bottom:14px}
+  .panel h2{font-size:16px;display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .panel h2 .ic{color:var(--green)}
+  .panel .sub{color:var(--ink-soft);font-size:12.5px;margin-bottom:14px}
+  .eyebrow{font-family:"Chakra Petch";font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:6px}
+
+  .grid{display:grid;gap:12px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}
+  @media(max-width:640px){.g2,.g3{grid-template-columns:1fr}}
+  label.fld{display:block}
+  label.fld .lt{font-size:12px;color:var(--ink-soft);font-weight:500;margin-bottom:4px;display:block}
+  .in{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:#fff;transition:border .15s,box-shadow .15s}
+  .in:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(26,107,76,.12)}
+  textarea.in{resize:vertical;min-height:60px;line-height:1.5}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+  @media(max-width:860px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .kpi:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--green)}
+  .kpi.g:before{background:var(--gold)}.kpi.o:before{background:var(--ok)}.kpi.w:before{background:var(--warn)}.kpi.i:before{background:var(--info)}
+  .kpi .ko{font-family:"Chakra Petch";font-size:10.5px;letter-spacing:.5px;color:var(--gold);font-weight:600}
+  .kpi .kl{font-size:11.5px;color:var(--ink-soft);font-weight:500;margin-top:2px}
+  .kpi .kv{font-family:"Chakra Petch";font-weight:700;font-size:24px;line-height:1.1;margin-top:5px}
+  .kpi .kv small{font-size:12px;color:var(--ink-soft);font-weight:500}
+  .kpi .km{font-size:11px;margin-top:4px}
+
+  .ovrow{display:grid;grid-template-columns:240px 1fr;gap:14px}
+  @media(max-width:760px){.ovrow{grid-template-columns:1fr}}
+  .ring-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .ring-cnt{font-family:"Chakra Petch";font-weight:700;font-size:32px}
+  .phaselist{display:flex;flex-direction:column;gap:9px}
+  .prow{display:flex;align-items:center;gap:10px}
+  .pchip{min-width:34px;height:30px;padding:0 6px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:"Chakra Petch";font-weight:700;color:#fff;flex:none;font-size:12px}
+  .pbar{flex:1;height:9px;background:var(--line-soft);border-radius:6px;overflow:hidden}
+  .pbar>i{display:block;height:100%;border-radius:6px}
+  .pmeta{font-size:11.5px;color:var(--ink-soft);width:52px;text-align:right;flex:none}
+
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  th,td{padding:8px 9px;text-align:center;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+  th{background:#F1F5F2;color:var(--ink-soft);font-weight:600;font-size:11px;letter-spacing:.2px}
+  td:first-child,th:first-child{text-align:left;white-space:normal}
+  tr:last-child td{border-bottom:none}
+  td input{border:1px solid transparent;border-radius:7px;padding:6px;width:46px;text-align:center;background:transparent}
+  td input.wide{width:100%;text-align:left}
+  td input:focus{outline:none;border-color:var(--green);background:#fff}
+  .grouprow td{background:var(--green-l);color:var(--green-d);font-weight:700;font-size:12px;text-align:left}
+  .delrow{background:none;border:none;color:var(--bad);font-size:15px;padding:2px 6px;border-radius:6px;opacity:.55}
+  .delrow:hover{opacity:1;background:#fbe9e7}
+  .totcol{font-family:"Chakra Petch";font-weight:700}
+
+  .btn{background:var(--green);color:#fff;border:none;border-radius:9px;padding:9px 14px;font-size:13.5px;font-weight:600;display:inline-flex;gap:7px;align-items:center}
+  .btn:hover{background:var(--green-d)}
+  .btn.ghost{background:#fff;color:var(--green);border:1px solid var(--green)}
+  .btn.ghost:hover{background:var(--green-l)}
+  .btn.gold{background:var(--gold);color:#2a1d04}.btn.gold:hover{filter:brightness(.95)}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+  .pdca-cols{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+  @media(max-width:980px){.pdca-cols{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:680px){.pdca-cols{grid-template-columns:1fr}}
+  .pcol{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+  .pcol .ph{color:#fff;padding:9px 11px}
+  .pcol .ph h3{font-size:14px;color:#fff}.pcol .ph span{font-size:10px;opacity:.9;font-family:"IBM Plex Sans Thai"}
+  .tasks{padding:8px;display:flex;flex-direction:column;gap:6px;min-height:30px;flex:1}
+  .task{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;background:#F5F8F6;border-radius:8px;padding:7px 8px}
+  .task input[type=checkbox]{margin-top:2px;width:15px;height:15px;accent-color:var(--green);flex:none}
+  .task.done span{text-decoration:line-through;color:#9aa6a0}
+  .task span{flex:1;word-break:break-word}
+  .task .x{color:var(--bad);opacity:.45;border:none;background:none;font-size:14px}.task .x:hover{opacity:1}
+  .addtask{display:flex;gap:6px;padding:8px;border-top:1px solid var(--line-soft)}
+  .addtask input{flex:1;border:1px solid var(--line);border-radius:7px;padding:6px 8px;width:100%}
+  .addtask button{border:none;background:var(--green);color:#fff;border-radius:7px;width:30px;font-size:17px;flex:none}
+
+  .log{display:flex;flex-direction:column}
+  .logitem{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line-soft);align-items:flex-start}
+  .logitem:last-child{border:none}
+  .logdate{font-family:"Chakra Petch";font-size:12px;color:var(--green);width:78px;flex:none;font-weight:600}
+  .logstage{font-size:10px;font-weight:700;color:#fff;border-radius:5px;padding:1px 6px;flex:none}
+  .logitem .lx{color:var(--bad);opacity:.5;background:none;border:none;font-size:13px}.logitem .lx:hover{opacity:1}
+
+  .statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  @media(max-width:760px){.statgrid{grid-template-columns:repeat(2,1fr)}}
+  .stat{background:#F5F8F6;border:1px solid var(--line-soft);border-radius:11px;padding:11px 12px}
+  .stat .sl{font-size:11px;color:var(--ink-soft)}
+  .stat .sv{font-family:"Chakra Petch";font-weight:700;font-size:20px;margin-top:2px}
+  .stat .sv small{font-size:11px;color:var(--ink-soft);font-weight:500}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
+  .pill.ok{background:#E1F0E8;color:var(--ok)}.pill.bad{background:#FAE7E4;color:var(--bad)}.pill.warn{background:#FAF0DC;color:#9a6a17}.pill.info{background:#E0EEF4;color:var(--info)}
+  .barchart{display:flex;flex-direction:column;gap:7px;margin-top:8px}
+  .brow{display:flex;align-items:center;gap:8px;font-size:12px}
+  .brow .bn{width:120px;flex:none;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .btrack{flex:1;background:var(--line-soft);border-radius:6px;height:18px;position:relative;overflow:hidden}
+  .btrack>i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;color:#fff;font-size:10px;font-weight:600;min-width:18px}
+  .critmark{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--bad)}
+
+  .empty{text-align:center;color:var(--ink-soft);font-size:13px;padding:16px 8px}
+  .note{font-size:12px;color:var(--ink-soft);background:var(--gold-l);border:1px solid #ECDDB8;border-radius:9px;padding:9px 11px;margin-top:10px}
+  .obj{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid var(--line-soft);align-items:flex-start}
+  .obj:last-child{border:none}
+  .objn{font-family:"Chakra Petch";font-weight:700;color:#fff;background:var(--green);width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:none;font-size:13px}
+  .objbody{flex:1}.objt{font-size:13px;font-weight:500}.objr{font-size:12px;color:var(--ink-soft);margin-top:3px}
+  .hr{height:1px;background:var(--line-soft);margin:13px 0}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .chipsel{border:1px solid var(--line);border-radius:20px;padding:5px 12px;font-size:12.5px;background:#fff;color:var(--ink-soft)}
+  .chipsel.on{background:var(--green);color:#fff;border-color:var(--green);font-weight:600}
+
+  @media print{header,nav,.toolbar,.delrow,.addtask,.task .x,.logitem .lx,.hbtn,#expArea{display:none!important}
+    .page{display:block!important;page-break-after:always}.panel{break-inside:avoid;box-shadow:none}body{background:#fff}}
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <span class="badge">คศ.4</span>
+    <div style="min-width:0"><h1 id="hdrTitle">STEM–GROW Model</h1>
+    <small id="hdrSub">ระบบจัดการ · ติดตาม · วิเคราะห์งานวิจัย IFTE 2569</small></div>
+  </div>
+  <span class="spacer"></span>
+  <span class="savechip"><span class="dot" id="saveDot"></span><span id="saveTxt">บันทึกอัตโนมัติ</span></span>
+  <button class="hbtn" onclick="copyShareLink()">🔗 ลิงก์แชร์</button>
+  <button class="hbtn" onclick="exportJSON()">⤓ สำรอง</button>
+</header>
+
+<nav id="nav">
+  <button class="tab active" data-tab="ov"><span class="tn">01</span>ภาพรวม</button>
+  <button class="tab" data-tab="info"><span class="tn">02</span>ข้อมูลนวัตกรรม</button>
+  <button class="tab" data-tab="people"><span class="tn">03</span>กลุ่มเป้าหมาย</button>
+  <button class="tab" data-tab="track"><span class="tn">04</span>ติดตาม STEM–GROW</button>
+  <button class="tab" data-tab="assess"><span class="tn">05</span>ประเมินผล</button>
+  <button class="tab" data-tab="analyze"><span class="tn">06</span>วิเคราะห์ผล</button>
+  <button class="tab" data-tab="report"><span class="tn">07</span>สรุป/ส่งออก</button>
+</nav>
+
+<main>
+  <!-- OVERVIEW -->
+  <section class="page show" id="page-ov">
+    <div class="kpis" id="kpis"></div>
+    <div class="ovrow">
+      <div class="panel ring-wrap">
+        <div class="eyebrow">ความก้าวหน้า</div>
+        <svg width="160" height="160" viewBox="0 0 160 160" id="ring"></svg>
+        <div style="margin-top:-100px;pointer-events:none">
+          <div class="ring-cnt" id="ringPct">0%</div>
+          <div style="font-size:11px;color:var(--ink-soft)">งานที่เสร็จ</div>
+        </div>
+        <div style="height:74px"></div>
+        <div style="font-size:12px;color:var(--ink-soft)" id="ringMeta"></div>
+      </div>
+      <div class="panel">
+        <div class="eyebrow">กระบวนการ 5 ขั้น</div>
+        <h2 style="margin-bottom:12px">สถานะ STEM–GROW</h2>
+        <div class="phaselist" id="phaselist"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow">เป้าหมายตามวัตถุประสงค์</div>
+      <h2 style="margin-bottom:8px">สรุปผลรายวัตถุประสงค์</h2>
+      <div id="objSummary"></div>
+    </div>
+  </section>
+
+  <!-- INFO -->
+  <section class="page" id="page-info">
+    <div class="panel">
+      <div class="eyebrow">โครงร่างนวัตกรรม</div>
+      <h2><span class="ic">◆</span> ข้อมูลพื้นฐาน</h2>
+      <p class="sub">แก้ไขได้ ข้อมูลจะไปปรากฏบนหน้าภาพรวมและหน้าสรุปอัตโนมัติ</p>
+      <div class="grid g2">
+        <label class="fld" style="grid-column:1/-1"><span class="lt">ชื่อนวัตกรรม</span><textarea class="in" id="f_title"></textarea></label>
+        <label class="fld"><span class="lt">ผู้สร้าง</span><input class="in" id="f_author"></label>
+        <label class="fld"><span class="lt">ตำแหน่ง / วิทยฐานะ</span><input class="in" id="f_position"></label>
+        <label class="fld"><span class="lt">สถานศึกษา</span><input class="in" id="f_school"></label>
+        <label class="fld"><span class="lt">สังกัด</span><input class="in" id="f_affil"></label>
+        <label class="fld"><span class="lt">รายวิชา / รหัส</span><input class="in" id="f_subject"></label>
+        <label class="fld"><span class="lt">ระดับชั้น</span><input class="in" id="f_level"></label>
+        <label class="fld" style="grid-column:1/-1"><span class="lt">กิจกรรม / โครงการ</span><input class="in" id="f_activity"></label>
+      </div>
+      <div class="hr"></div>
+      <span class="lt" style="font-size:12px;color:var(--ink-soft);font-weight:500">นวัตกรรม 5 ด้าน (เลือก 1)</span>
+      <div class="chips" id="fieldChips"></div>
+    </div>
+    <div class="panel">
+      <h2><span class="ic">◆</span> วัตถุประสงค์</h2>
+      <p class="sub">วัตถุประสงค์แต่ละข้อผูกกับเครื่องมือประเมินในแท็บ “ประเมินผล”</p>
+      <label class="fld" style="margin-bottom:10px"><span class="lt">วัตถุประสงค์ข้อ 1 — คุณภาพนวัตกรรม</span><textarea class="in" id="f_obj1"></textarea></label>
+      <label class="fld" style="margin-bottom:10px"><span class="lt">ข้อ 2 — สมรรถนะอาชีพ</span><textarea class="in" id="f_obj2"></textarea></label>
+      <label class="fld" style="margin-bottom:10px"><span class="lt">ข้อ 3 — Soft Skills</span><textarea class="in" id="f_obj3"></textarea></label>
+      <label class="fld"><span class="lt">ข้อ 4 — ความพึงพอใจ</span><textarea class="in" id="f_obj4"></textarea></label>
+    </div>
+    <div class="panel">
+      <h2><span class="ic">◆</span> เกณฑ์การวิเคราะห์</h2>
+      <div class="grid g3">
+        <label class="fld"><span class="lt">เกณฑ์ผ่านสมรรถนะอาชีพ (%)</span><input class="in num" type="number" id="f_critComp" value="80"></label>
+        <label class="fld"><span class="lt">คะแนนเต็มสมรรถนะ</span><input class="in num" type="number" id="f_fullComp" value="24"></label>
+        <label class="fld"><span class="lt">คะแนนผ่าน “ดีขึ้นไป” (Soft Skills)</span><input class="in num" type="number" id="f_softPass" value="15"></label>
+        <label class="fld"><span class="lt">คะแนนเต็ม Soft Skills</span><input class="in num" type="number" id="f_fullSoft" value="20"></label>
+        <label class="fld"><span class="lt">จำนวนผ่านขั้นต่ำ Soft Skills (คน)</span><input class="in num" type="number" id="f_softMin" value="8"></label>
+        <label class="fld"><span class="lt">ค่าเฉลี่ยเป้าหมาย (มาก = 3.51)</span><input class="in num" type="number" step="0.01" id="f_satTarget" value="3.51"></label>
+      </div>
+    </div>
+  </section>
+
+  <!-- PEOPLE -->
+  <section class="page" id="page-people">
+    <div class="panel">
+      <div class="eyebrow">โครงสร้างข้อมูลกลาง</div>
+      <h2><span class="ic">◆</span> กลุ่มเป้าหมาย</h2>
+      <p class="sub">รายชื่อนี้ใช้ร่วมกันทุกเครื่องมือประเมิน เพิ่ม/ลบที่นี่ที่เดียว</p>
+      <div class="tbl-wrap"><table><thead><tr><th style="width:40px">#</th><th>ชื่อ-สกุล</th><th>เลขที่/รหัส</th><th style="width:44px"></th></tr></thead><tbody id="stuBody"></tbody></table></div>
+      <div class="toolbar">
+        <button class="btn" onclick="addStudent()">＋ เพิ่มรายชื่อ</button>
+        <button class="btn ghost" onclick="addStudent(5)">＋ เพิ่ม 5 แถว</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRACK -->
+  <section class="page" id="page-track">
+    <div class="panel">
+      <div class="eyebrow">วิธีติดตามผลการดำเนินงาน</div>
+      <h2><span class="ic">◆</span> วงจร STEM–GROW 5 ขั้น</h2>
+      <p class="sub">ติ๊กเมื่อทำเสร็จ — ความก้าวหน้าอัพเดทบนหน้าภาพรวมทันที (มีกิจกรรมตั้งต้นจากแผนการสอนให้แล้ว)</p>
+      <div class="pdca-cols" id="trackCols"></div>
+    </div>
+    <div class="panel">
+      <h2><span class="ic">◆</span> บันทึกการดำเนินงาน</h2>
+      <p class="sub">ร่องรอยหลักฐานประกอบผลงาน เรียงตามวันที่</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px">
+        <label class="fld"><span class="lt">วันที่</span><input class="in" type="date" id="logDate"></label>
+        <label class="fld"><span class="lt">ขั้น</span><select class="in" id="logStage"></select></label>
+        <label class="fld" style="flex:1;min-width:160px"><span class="lt">รายละเอียด</span><input class="in" id="logText" placeholder="เช่น ทดสอบความงอกเมล็ดพันธุ์"></label>
+        <button class="btn" onclick="addLog()">＋</button>
+      </div>
+      <div class="log" id="logList"></div>
+    </div>
+  </section>
+
+  <!-- ASSESS -->
+  <section class="page" id="page-assess">
+    <div class="panel">
+      <div class="eyebrow">วัตถุประสงค์ข้อ 1</div>
+      <h2><span class="ic">◆</span> คุณภาพนวัตกรรม (ผู้เชี่ยวชาญ 3 ท่าน)</h2>
+      <p class="sub">มาตราส่วน 5 ระดับ (5 = เหมาะสมมากที่สุด) ค่าเฉลี่ยรายข้อและรวมคำนวณอัตโนมัติ</p>
+      <div class="tbl-wrap"><table id="qualTable"><thead><tr><th>รายการประเมิน</th><th>คนที่ 1</th><th>คนที่ 2</th><th>คนที่ 3</th><th>x̄</th><th>ระดับ</th></tr></thead><tbody id="qualBody"></tbody></table></div>
+      <div class="statgrid" id="qualStats" style="margin-top:12px"></div>
+    </div>
+
+    <div class="panel">
+      <div class="eyebrow">วัตถุประสงค์ข้อ 2</div>
+      <h2><span class="ic">◆</span> สมรรถนะอาชีพด้านการผลิตพืช</h2>
+      <p class="sub">ให้คะแนนแต่ละรายการ 1–4 (เต็ม 24) · ผ่านเกณฑ์เมื่อ ≥ ร้อยละ <span id="compCritLbl">80</span></p>
+      <div class="tbl-wrap"><table id="compTable"><thead id="compHead"></thead><tbody id="compBody"></tbody></table></div>
+      <div class="statgrid" id="compStats" style="margin-top:12px"></div>
+    </div>
+
+    <div class="panel">
+      <div class="eyebrow">วัตถุประสงค์ข้อ 3</div>
+      <h2><span class="ic">◆</span> ทักษะ Soft Skills</h2>
+      <p class="sub">ให้คะแนน 1–4 (เต็ม 20) · “ดีขึ้นไป” เมื่อ ≥ <span id="softPassLbl">15</span> คะแนน · เกณฑ์สำเร็จ ≥ <span id="softMinLbl">8</span> คน</p>
+      <div class="tbl-wrap"><table id="softTable"><thead id="softHead"></thead><tbody id="softBody"></tbody></table></div>
+      <div class="statgrid" id="softStats" style="margin-top:12px"></div>
+    </div>
+
+    <div class="panel">
+      <div class="eyebrow">วัตถุประสงค์ข้อ 4</div>
+      <h2><span class="ic">◆</span> ความพึงพอใจ</h2>
+      <p class="sub">มาตราส่วน 5 ระดับ · แก้ไขรายการประเมินได้ที่หัวตาราง</p>
+      <div class="tbl-wrap"><table id="satTable"><thead id="satHead"></thead><tbody id="satBody"></tbody></table></div>
+      <div class="toolbar"><button class="btn ghost" onclick="addSatAspect()">＋ เพิ่มรายการประเมิน</button></div>
+      <div class="statgrid" id="satStats" style="margin-top:12px"></div>
+    </div>
+  </section>
+
+  <!-- ANALYZE -->
+  <section class="page" id="page-analyze">
+    <div class="panel">
+      <h2><span class="ic">◆</span> สมรรถนะอาชีพรายบุคคล (%)</h2>
+      <div class="barchart" id="chartComp"></div>
+    </div>
+    <div class="panel">
+      <h2><span class="ic">◆</span> Soft Skills รายบุคคล (เต็ม 20)</h2>
+      <div class="barchart" id="chartSoft"></div>
+    </div>
+    <div class="panel">
+      <h2><span class="ic">◆</span> คุณภาพนวัตกรรมรายด้าน & ความพึงพอใจรายข้อ</h2>
+      <div style="font-size:12px;color:var(--ink-soft);margin-bottom:4px">คุณภาพนวัตกรรม (x̄ รายด้าน)</div>
+      <div class="barchart" id="chartQual"></div>
+      <div class="hr"></div>
+      <div style="font-size:12px;color:var(--ink-soft);margin-bottom:4px">ความพึงพอใจ (x̄ รายข้อ)</div>
+      <div class="barchart" id="chartSat"></div>
+    </div>
+  </section>
+
+  <!-- REPORT -->
+  <section class="page" id="page-report">
+    <div class="panel" id="reportCard"></div>
+    <div class="panel" id="expArea">
+      <h2><span class="ic">◆</span> สำรอง / นำเข้า</h2>
+      <p class="sub">ข้อมูลบันทึกอัตโนมัติแล้ว ส่วนนี้ไว้ทำไฟล์สำรองหรือพิมพ์รายงาน</p>
+      <div class="toolbar">
+        <button class="btn gold" onclick="window.print()">🖶 พิมพ์ / บันทึก PDF</button>
+        <button class="btn ghost" onclick="exportJSON()">⤓ ดาวน์โหลดไฟล์สำรอง</button>
+        <label class="btn ghost" style="cursor:pointer">⤒ นำเข้าไฟล์<input type="file" accept="application/json" style="display:none" onchange="importJSON(event)"></label>
+        <button class="btn ghost" style="color:var(--bad);border-color:var(--bad)" onclick="resetAll()">↺ ล้างข้อมูล</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ===== Firebase config — วางค่าจาก Firebase Console ตรงนี้ (แทนคำว่า PASTE...) ===== */
+const firebaseConfig = {
+  apiKey: "AIzaSyBa1SZCylQ22JoPISANpxmOlBBFtPcIHx4",
+  authDomain: "stem-grow-c1b9b.firebaseapp.com",
+  databaseURL: "https://stem-grow-c1b9b-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "stem-grow-c1b9b",
+  storageBucket: "stem-grow-c1b9b.firebasestorage.app",
+  messagingSenderId: "825989040272",
+  appId: "1:825989040272:web:2a04fd002507c5be1fb015",
+  measurementId: "G-Z8Z3Q0P8YS"
+};
+const WS = new URLSearchParams(location.search).get('ws') || 'stemgrow-2569';
+const LKEY = "kru4:stemgrow:"+WS;
+const clientId = Math.random().toString(36).slice(2);
+let dbRef=null, mode='local', pendingRemote=false, applyingRemote=false, saveTimer2=null;
+const STAGES=[
+  {k:"S",c:"#1A6B4C",n:"S",th:"Survey & Study",sub:"สำรวจ ศึกษา · 3 ชม."},
+  {k:"T",c:"#2C8A5E",n:"T",th:"Team Planning",sub:"วางแผน · 3 ชม."},
+  {k:"E",c:"#B6852C",n:"E",th:"Experiment & Execute",sub:"ลงมือทำ · 9 ชม."},
+  {k:"M",c:"#C7882B",n:"M",th:"Monitoring & Modification",sub:"ติดตาม · 3 ชม."},
+  {k:"GROW",c:"#2C6E8F",n:"GROW",th:"Growth & Achievement",sub:"สะท้อนผล · 3 ชม."}
+];
+const FIELDS=["1. Soft Power","2. Coaching","3. STEM Education","4. สุขภาพ 4 มิติ","5. Credit Bank"];
+const QUAL_ITEMS=[
+  {g:"1. หลักการ แนวคิด ทฤษฎี"},
+  {t:"1.1 ความสอดคล้องกับ PBL และ STEM Education"},
+  {t:"1.2 บูรณาการ Experiential Learning สู่การปฏิบัติจริง"},
+  {t:"1.3 ความเหมาะสมในการพัฒนา Soft Skills และสมรรถนะอาชีพ"},
+  {g:"2. กระบวนการ STEM–GROW 5 ขั้น"},
+  {t:"2.1 ขั้น S : กำหนดโจทย์จากสถานการณ์จริงและตลาด"},
+  {t:"2.2 ขั้น T : วางแผนงานและออกแบบแปลงปลูกร่วมกัน"},
+  {t:"2.3 ขั้น E : ปฏิบัติในแปลงเรียนรู้จริง 5,000 ต้น"},
+  {t:"2.4 ขั้น M : วิเคราะห์ปัญหาและปรับปรุงการผลิต"},
+  {t:"2.5 ขั้น GROW : สะท้อนผลและต่อยอดสู่มืออาชีพ"},
+  {g:"3. ความสอดคล้องกับวิชาหลักพืชกรรม"},
+  {t:"3.1 เนื้อหาสอดคล้องมาตรฐาน GAP และหน่วยที่ 6"},
+  {t:"3.2 ความเหมาะสมของเวลา (21 ชม. / 7 สัปดาห์)"},
+  {t:"3.3 สื่อแปลงจริงส่งเสริม Active Learning"},
+  {g:"4. การวัดและประเมินผล"},
+  {t:"4.1 เครื่องมือประเมินสมรรถนะอาชีพชัดเจน"},
+  {t:"4.2 เครื่องมือประเมิน Soft Skills ครอบคลุม"}
+];
+const COMP_ITEMS=["1. การเพาะเมล็ด","2. การเตรียมแปลงปลูก","3. การย้ายปลูก","4. การดูแลรักษาพืช","5. การบันทึกข้อมูล","6. การแก้ปัญหาหน้างาน"];
+const SOFT_ITEMS=["1. ความรับผิดชอบ","2. การทำงานเป็นทีม","3. การสื่อสาร","4. การคิดและแก้ปัญหา","5. ความมีวินัย"];
+const SAT_DEFAULT=["ด้านกิจกรรมการเรียนรู้","ด้านสื่อและแหล่งเรียนรู้ (แปลงจริง)","ด้านประโยชน์ที่ได้รับ","ด้านการนำไปใช้ในอาชีพ","ความพึงพอใจโดยรวม"];
+
+function defaultStages(){return {
+  S:["นำเสนอสถานการณ์จริง/ความต้องการตลาด","ศึกษาลักษณะพืชและหลักการ GAP","วิเคราะห์โจทย์ (จำนวนต้น/พื้นที่/เมล็ด)","กำหนดเป้าหมายโครงการร่วมกัน"].map(t=>({text:t,done:false})),
+  T:["แบ่งกลุ่มและกำหนดบทบาทหน้าที่","คำนวณเมล็ด/ต้นทุน/พื้นที่ปลูก","ออกแบบแปลงปลูก","จัดทำแผนปฏิบัติงาน"].map(t=>({text:t,done:false})),
+  E:["เตรียมแปลงปลูก (พรวน/ปรับปรุงดิน/ยกร่อง)","ย้ายกล้าลงแปลง","ดูแลรักษา (น้ำ/ปุ๋ย/วัชพืช)","ป้องกันกำจัดศัตรูพืช","บันทึกข้อมูลการเจริญเติบโต"].map(t=>({text:t,done:false})),
+  M:["ติดตามการเจริญเติบโต (วัดความสูง/นับต้นรอด)","วิเคราะห์ปัญหา (โรค/แมลง)","วางแผนแก้ไข","ปรับปรุงกระบวนการผลิต"].map(t=>({text:t,done:false})),
+  GROW:["สรุปผลการดำเนินงาน","คำนวณต้นทุนและผลตอบแทน","นำเสนอผลงานกลุ่ม","สะท้อนผลการเรียนรู้","ประเมินสมรรถนะและ Soft Skills"].map(t=>({text:t,done:false}))
+};}
+function defaultStudents(){return Array.from({length:10},(_,i)=>({id:"s"+(i+1),name:"",no:String(i+1)}));}
+
+function blank(){return{
+  info:{
+    title:"STEM–GROW Model : นวัตกรรมการจัดการเรียนรู้เชิงปฏิบัติผ่านแปลงเรียนรู้จริง เพื่อพัฒนาสมรรถนะอาชีพและทักษะ Soft Skills ของผู้เรียนสายเกษตร",
+    author:"นางสาวภัคควดี พวงเงินมาก",position:"ครู วิทยฐานะ ชำนาญการพิเศษ",
+    school:"วิทยาลัยเกษตรและเทคโนโลยีเชียงใหม่",affil:"สำนักงานคณะกรรมการการอาชีวศึกษา",
+    subject:"หลักพืชกรรม (21701-2001)",level:"ปวช.1/1 สาขาเกษตรศาสตร์",
+    activity:"ผลิตดอกบานไม่รู้โรยเชิงพาณิชย์ 5,000 ต้น",
+    obj1:"เพื่อพัฒนาและหาคุณภาพของนวัตกรรม STEM–GROW Model สำหรับการจัดการเรียนรู้รายวิชาหลักพืชกรรม",
+    obj2:"เพื่อพัฒนาสมรรถนะอาชีพด้านการผลิตพืชของผู้เรียนให้ผ่านเกณฑ์การประเมินไม่น้อยกว่าร้อยละ 80",
+    obj3:"เพื่อพัฒนาทักษะ Soft Skills ของผู้เรียนให้มีผลการประเมินอยู่ในระดับดีขึ้นไป ไม่น้อยกว่าร้อยละ 80",
+    obj4:"เพื่อศึกษาความพึงพอใจของผู้เรียนที่มีต่อการจัดการเรียนรู้ด้วย STEM–GROW Model โดยมีค่าเฉลี่ยอยู่ในระดับมากขึ้นไป",
+    critComp:80,fullComp:24,softPass:15,fullSoft:20,softMin:8,satTarget:3.51
+  },
+  field:2,
+  students:defaultStudents(),
+  stages:defaultStages(),
+  log:[],
+  qual:{}, // itemIndex -> [e1,e2,e3]
+  comp:{}, // studentId -> [6]
+  soft:{}, // studentId -> [5]
+  satAspects:SAT_DEFAULT.slice(),
+  sat:{}   // studentId -> [n]
+};}
+let S=blank(),saveTimer=null;
+
+/* ===== backend: cloud (Firebase) + local fallback ===== */
+function flag(t,c){const e=document.getElementById('saveTxt'),d=document.getElementById('saveDot');if(e)e.textContent=t;if(d)d.style.background=c;}
+function cfgReady(){return firebaseConfig.apiKey && firebaseConfig.apiKey.indexOf('PASTE')!==0;}
+function isEditing(){const a=document.activeElement;return !!a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) && a.type!=='checkbox';}
+function mergeIn(d){S=Object.assign(blank(),d||{});S.info=Object.assign(blank().info,(d&&d.info)||{});S.stages=Object.assign(defaultStages(),(d&&d.stages)||{});}
+function loadLocalRaw(){try{const r=localStorage.getItem(LKEY);return r?JSON.parse(r):null;}catch(e){return null;}}
+function writeCloud(seed){const payload=Object.assign({},S,{_w:clientId,_t:Date.now()});dbRef.set(payload).then(()=>{if(!seed)flag('ออนไลน์ · ซิงก์แล้ว','var(--ok)');}).catch(()=>flag('ซิงก์ไม่สำเร็จ — ตรวจ Rules','var(--bad)'));}
+async function load(){
+  if(cfgReady() && window.firebase){
+    try{
+      firebase.initializeApp(firebaseConfig);
+      const db=firebase.database();
+      dbRef=db.ref('workspaces/'+WS);
+      mode='cloud';
+      db.ref('.info/connected').on('value',s=>{flag(s.val()?'ออนไลน์ · ซิงก์แล้ว':'ออฟไลน์ (จะซิงก์เมื่อต่อเน็ต)', s.val()?'var(--ok)':'var(--warn)');});
+      dbRef.on('value',snap=>{
+        const v=snap.val();
+        if(v===null){mergeIn(loadLocalRaw());writeCloud(true);hydrate();renderAll();return;}
+        if(v._w===clientId)return;
+        applyingRemote=true;mergeIn(v);applyingRemote=false;
+        try{localStorage.setItem(LKEY,JSON.stringify(S));}catch(e){}
+        if(isEditing()){pendingRemote=true;flag('มีการอัปเดตจากผู้อื่น…','var(--info)');}
+        else{hydrate();renderAll();}
+      });
+      document.addEventListener('focusout',()=>{setTimeout(()=>{if(pendingRemote&&!isEditing()){pendingRemote=false;hydrate();renderAll();flag('ออนไลน์ · ซิงก์แล้ว','var(--ok)');}},120);});
+      return;
+    }catch(e){mode='local';}
+  }
+  const d=loadLocalRaw();if(d)mergeIn(d);
+  flag(cfgReady()?'โหมดในเครื่อง':'ยังไม่ตั้งค่า Firebase · โหมดในเครื่อง',cfgReady()?'var(--warn)':'var(--bad)');
+  if(!cfgReady())showCfgBanner();
+  hydrate();renderAll();
+}
+function save(){
+  if(applyingRemote)return;
+  try{localStorage.setItem(LKEY,JSON.stringify(S));}catch(e){}
+  if(mode==='cloud'){flag('กำลังซิงก์…','var(--warn)');clearTimeout(saveTimer2);saveTimer2=setTimeout(()=>writeCloud(false),500);}
+  else{flag('บันทึกในเครื่องแล้ว','var(--ok)');}
+}
+function copyShareLink(){const u=location.href;if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(()=>alert('คัดลอกลิงก์แชร์แล้ว:\n'+u)).catch(()=>prompt('คัดลอกลิงก์นี้',u));}else{prompt('คัดลอกลิงก์นี้',u);}}
+function showCfgBanner(){if(document.getElementById('cfgBanner'))return;const b=document.createElement('div');b.id='cfgBanner';b.style.cssText='position:fixed;left:12px;right:12px;bottom:12px;z-index:50;background:#16271F;color:#fff;border-radius:12px;padding:12px 14px;font-size:12.5px;box-shadow:0 8px 30px rgba(0,0,0,.3);display:flex;gap:10px;align-items:center';b.innerHTML='<b style=\'color:#B6852C\'>โหมดในเครื่อง</b> ยังไม่ได้ตั้งค่า Firebase — ข้อมูลยังไม่แชร์ระหว่างผู้ใช้ (ดูวิธีในไฟล์คู่มือ) <button onclick=\'this.parentNode.remove()\' style=\'margin-left:auto;background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:7px;padding:5px 9px\'>ปิด</button>';document.body.appendChild(b);}
+
+/* tabs */
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('.tab');if(!b)return;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));
+  b.classList.add('active');document.getElementById('page-'+b.dataset.tab).classList.add('show');
+  if(b.dataset.tab==='ov')renderOverview();
+  if(b.dataset.tab==='analyze')renderAnalysis();
+  if(b.dataset.tab==='report')renderReport();
+  window.scrollTo({top:0,behavior:'smooth'});});
+
+/* info form */
+const TXT=["title","author","position","school","affil","subject","level","activity","obj1","obj2","obj3","obj4"];
+const NUMF=["critComp","fullComp","softPass","fullSoft","softMin","satTarget"];
+function hydrate(){
+  TXT.concat(NUMF).forEach(k=>{const el=document.getElementById('f_'+k);if(el)el.value=S.info[k]??"";});
+  renderFieldChips();
+  document.getElementById('hdrTitle').textContent="STEM–GROW Model";
+  document.getElementById('compCritLbl').textContent=S.info.critComp;
+  document.getElementById('softPassLbl').textContent=S.info.softPass;
+  document.getElementById('softMinLbl').textContent=S.info.softMin;
+}
+TXT.concat(NUMF).forEach(k=>document.addEventListener('input',ev=>{if(ev.target.id==='f_'+k){
+  S.info[k]=NUMF.includes(k)?(parseFloat(ev.target.value)||0):ev.target.value;save();
+  if(['critComp','softPass','softMin'].includes(k)){hydrate();renderComp();renderSoft();}
+}}));
+function renderFieldChips(){document.getElementById('fieldChips').innerHTML=FIELDS.map((f,i)=>`<button class="chipsel ${S.field===i?'on':''}" data-field="${i}">${f}</button>`).join('');}
+document.getElementById('fieldChips').addEventListener('click',e=>{if(e.target.dataset.field!==undefined){S.field=+e.target.dataset.field;save();renderFieldChips();}});
+
+/* students */
+let sidc=100;
+function addStudent(n=1){for(let i=0;i<n;i++)S.students.push({id:"s"+(sidc++),name:"",no:String(S.students.length+1)});save();renderStudents();}
+function renderStudents(){const tb=document.getElementById('stuBody');
+  if(!S.students.length){tb.innerHTML='<tr><td colspan="4" class="empty">ยังไม่มีรายชื่อ</td></tr>';return;}
+  tb.innerHTML=S.students.map((s,i)=>`<tr>
+    <td class="num" style="text-align:center">${i+1}</td>
+    <td><input class="wide" value="${esc(s.name)}" placeholder="ชื่อ-สกุล" data-id="${s.id}" data-f="name"></td>
+    <td><input value="${esc(s.no)}" data-id="${s.id}" data-f="no" style="width:80px;text-align:center"></td>
+    <td><button class="delrow" data-del="${s.id}">✕</button></td></tr>`).join('');
+}
+document.getElementById('stuBody').addEventListener('input',e=>{const id=e.target.dataset.id;if(!id)return;
+  const s=S.students.find(x=>x.id===id);if(s){s[e.target.dataset.f]=e.target.value;save();}});
+document.getElementById('stuBody').addEventListener('click',e=>{const id=e.target.dataset.del;if(!id)return;
+  S.students=S.students.filter(x=>x.id!==id);delete S.comp[id];delete S.soft[id];delete S.sat[id];save();renderStudents();});
+
+/* STEM-GROW tracking */
+function renderTrack(){const w=document.getElementById('trackCols');
+  w.innerHTML=STAGES.map(p=>{const ts=S.stages[p.k]||[];
+    return `<div class="pcol"><div class="ph" style="background:${p.c}"><h3>${p.n}</h3><span>${p.th} · ${p.sub.split('·')[1]||''}</span></div>
+      <div class="tasks">${ts.map((t,i)=>`<div class="task ${t.done?'done':''}"><input type="checkbox" ${t.done?'checked':''} data-st="${p.k}" data-i="${i}"><span>${esc(t.text)}</span><button class="x" data-std="${p.k}" data-id="${i}">✕</button></div>`).join('')||'<div class="empty" style="padding:4px">—</div>'}</div>
+      <div class="addtask"><input placeholder="เพิ่มงาน…" data-add="${p.k}"><button data-addbtn="${p.k}">＋</button></div></div>`;}).join('');
+}
+document.getElementById('trackCols').addEventListener('click',e=>{
+  if(e.target.dataset.addbtn){const k=e.target.dataset.addbtn,inp=document.querySelector(`[data-add="${k}"]`),v=inp.value.trim();if(v){S.stages[k].push({text:v,done:false});inp.value="";save();renderTrack();renderOverview();}return;}
+  if(e.target.dataset.std!==undefined){S.stages[e.target.dataset.std].splice(e.target.dataset.id,1);save();renderTrack();renderOverview();}});
+document.getElementById('trackCols').addEventListener('change',e=>{if(e.target.type==='checkbox'){S.stages[e.target.dataset.st][e.target.dataset.i].done=e.target.checked;save();renderTrack();renderOverview();}});
+document.getElementById('trackCols').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.dataset.add){const k=e.target.dataset.add,v=e.target.value.trim();if(v){S.stages[k].push({text:v,done:false});e.target.value="";save();renderTrack();renderOverview();}}});
+
+/* log */
+function renderLogStageOpts(){document.getElementById('logStage').innerHTML=STAGES.map(s=>`<option value="${s.k}">${s.n} · ${s.th}</option>`).join('');}
+function addLog(){const d=document.getElementById('logDate').value,st=document.getElementById('logStage').value,t=document.getElementById('logText').value.trim();
+  if(!t){document.getElementById('logText').focus();return;}
+  S.log.push({date:d||new Date().toISOString().slice(0,10),stage:st,text:t});S.log.sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('logText').value="";save();renderLog();}
+function renderLog(){const l=document.getElementById('logList');
+  if(!S.log.length){l.innerHTML='<div class="empty">ยังไม่มีบันทึก</div>';return;}
+  l.innerHTML=S.log.map((it,i)=>{const st=STAGES.find(s=>s.k===it.stage)||STAGES[0];
+    return `<div class="logitem"><span class="logdate">${fmtD(it.date)}</span><span class="logstage" style="background:${st.c}">${st.n}</span><span style="flex:1">${esc(it.text)}</span><button class="lx" data-log="${i}">✕</button></div>`;}).join('');}
+document.getElementById('logList').addEventListener('click',e=>{if(e.target.dataset.log!==undefined){S.log.splice(e.target.dataset.log,1);save();renderLog();}});
+
+/* ===== ASSESSMENT ===== */
+/* quality */
+function renderQual(){const tb=document.getElementById('qualBody');let html="";
+  QUAL_ITEMS.forEach((it,idx)=>{
+    if(it.g){html+=`<tr class="grouprow"><td colspan="6">${it.g}</td></tr>`;return;}
+    const v=S.qual[idx]||["","",""];const m=meanArr(v.filter(x=>x!==""&&x!==null).map(Number));
+    const lv=level5(m);
+    html+=`<tr><td>${it.t}</td>${[0,1,2].map(c=>`<td><input type="number" min="1" max="5" value="${v[c]??""}" data-q="${idx}" data-c="${c}"></td>`).join('')}
+      <td class="num">${v.some(x=>x!=="")?m.toFixed(2):"–"}</td><td>${m?`<span class="pill ${lv.cls}">${lv.txt}</span>`:"–"}</td></tr>`;
+  });tb.innerHTML=html;renderQualStats();}
+document.getElementById('qualBody').addEventListener('input',e=>{const q=e.target.dataset.q;if(q===undefined)return;
+  if(!S.qual[q])S.qual[q]=["","",""];S.qual[q][e.target.dataset.c]=e.target.value;save();renderQual();});
+function qualAll(){let arr=[];QUAL_ITEMS.forEach((it,idx)=>{if(it.g)return;(S.qual[idx]||[]).forEach(x=>{if(x!==""&&x!=null)arr.push(Number(x));});});return arr;}
+function renderQualStats(){const all=qualAll();const m=meanArr(all),sd=sdArr(all);const lv=level5(m);
+  document.getElementById('qualStats').innerHTML=[
+    {l:"ค่าเฉลี่ยรวม x̄",v:all.length?m.toFixed(2):"–",u:"จาก 5.00"},
+    {l:"ส่วนเบี่ยงเบน S.D.",v:all.length?sd.toFixed(2):"–",u:""},
+    {l:"ระดับคุณภาพ",v:m?lv.txt:"–",pill:m?lv.cls:null},
+    {l:"ผลตามวัตถุประสงค์ 1",v:m>=S.info.satTarget?"ผ่าน":"ตรวจสอบ",pill:m>=S.info.satTarget?"ok":"warn",u:"เกณฑ์ มากขึ้นไป"},
+  ].map(statHTML).join('');}
+
+/* generic student matrix */
+function studentMatrix(opt){ // opt: head, body, items, store, max, summary(fn(scores,id)->{cells,pill})
+  const headEl=document.getElementById(opt.head),bodyEl=document.getElementById(opt.body);
+  headEl.innerHTML=`<tr><th>ผู้เรียน</th>${opt.items.map(n=>`<th>${shortItem(n)}</th>`).join('')}<th>รวม</th><th>${opt.lastLbl}</th></tr>`;
+  if(!S.students.length){bodyEl.innerHTML=`<tr><td colspan="${opt.items.length+3}" class="empty">เพิ่มรายชื่อในแท็บกลุ่มเป้าหมายก่อน</td></tr>`;opt.stats&&opt.stats();return;}
+  bodyEl.innerHTML=S.students.map((s,i)=>{
+    const arr=S[opt.store][s.id]||Array(opt.items.length).fill("");
+    const r=opt.summary(arr,s);
+    return `<tr><td>${i+1}. ${esc(s.name)||'<span style="color:#9aa6a0">(ไม่ระบุชื่อ)</span>'}</td>
+      ${opt.items.map((_,c)=>`<td><input type="number" min="1" max="${opt.max}" value="${arr[c]??""}" data-st="${opt.store}" data-id="${s.id}" data-c="${c}"></td>`).join('')}
+      <td class="totcol">${r.total!=null?r.total:"–"}</td><td>${r.pill}</td></tr>`;
+  }).join('');
+  opt.stats&&opt.stats();
+}
+document.addEventListener('input',e=>{const store=e.target.dataset.st;if(!store||!['comp','soft','sat'].includes(store))return;
+  const id=e.target.dataset.id,c=+e.target.dataset.c;const len=store==='comp'?COMP_ITEMS.length:store==='soft'?SOFT_ITEMS.length:S.satAspects.length;
+  if(!S[store][id])S[store][id]=Array(len).fill("");S[store][id][c]=e.target.value;save();
+  if(store==='comp')renderComp();else if(store==='soft')renderSoft();else renderSat();});
+
+function renderComp(){document.getElementById('compCritLbl').textContent=S.info.critComp;
+  studentMatrix({head:'compHead',body:'compBody',items:COMP_ITEMS,store:'comp',max:4,lastLbl:'ร้อยละ/ผล',stats:renderCompStats,
+    summary:(arr)=>{const vals=arr.filter(x=>x!==""&&x!=null).map(Number);if(!vals.length)return{total:null,pill:'–'};
+      const tot=vals.reduce((a,b)=>a+b,0);const pct=tot/S.info.fullComp*100;const pass=pct>=S.info.critComp;
+      return{total:tot,pill:`<span class="pill ${pass?'ok':'bad'}">${pct.toFixed(0)}% ${pass?'ผ่าน':'ไม่ผ่าน'}</span>`};}});}
+function compStats(){let passers=0,scored=0,sumPct=0;
+  S.students.forEach(s=>{const v=(S.comp[s.id]||[]).filter(x=>x!==""&&x!=null).map(Number);if(v.length===COMP_ITEMS.length){scored++;const pct=v.reduce((a,b)=>a+b,0)/S.info.fullComp*100;sumPct+=pct;if(pct>=S.info.critComp)passers++;}});
+  return{passers,scored,pctGroup:scored?passers/scored*100:0,avgPct:scored?sumPct/scored:0};}
+function renderCompStats(){const c=compStats();const ok=c.scored&&c.pctGroup>=80;
+  document.getElementById('compStats').innerHTML=[
+    {l:"ประเมินครบแล้ว",v:c.scored+" / "+S.students.length,u:"คน"},
+    {l:"ผ่านเกณฑ์",v:c.passers,u:"คน"},
+    {l:"คิดเป็นร้อยละ",v:c.scored?c.pctGroup.toFixed(0):"–",u:"%"},
+    {l:"ผลตามวัตถุประสงค์ 2",v:c.scored?(ok?"ผ่าน":"ตรวจสอบ"):"–",pill:c.scored?(ok?"ok":"warn"):null,u:"เกณฑ์ ≥80%"},
+  ].map(statHTML).join('');}
+
+function renderSoft(){document.getElementById('softPassLbl').textContent=S.info.softPass;document.getElementById('softMinLbl').textContent=S.info.softMin;
+  studentMatrix({head:'softHead',body:'softBody',items:SOFT_ITEMS,store:'soft',max:4,lastLbl:'ระดับ',stats:renderSoftStats,
+    summary:(arr)=>{const vals=arr.filter(x=>x!==""&&x!=null).map(Number);if(!vals.length)return{total:null,pill:'–'};
+      const tot=vals.reduce((a,b)=>a+b,0);const good=tot>=S.info.softPass;const avg=tot/SOFT_ITEMS.length;
+      const lv=avg>=3.51?'ดีมาก':avg>=2.51?'ดี':avg>=1.51?'พอใช้':'ปรับปรุง';
+      return{total:tot,pill:`<span class="pill ${good?'ok':'warn'}">${lv}</span>`};}});}
+function softStats(){let good=0,scored=0;
+  S.students.forEach(s=>{const v=(S.soft[s.id]||[]).filter(x=>x!==""&&x!=null).map(Number);if(v.length===SOFT_ITEMS.length){scored++;if(v.reduce((a,b)=>a+b,0)>=S.info.softPass)good++;}});
+  return{good,scored};}
+function renderSoftStats(){const c=softStats();const ok=c.good>=S.info.softMin;
+  document.getElementById('softStats').innerHTML=[
+    {l:"ประเมินครบแล้ว",v:c.scored+" / "+S.students.length,u:"คน"},
+    {l:"ระดับดีขึ้นไป",v:c.good,u:"คน"},
+    {l:"เกณฑ์สำเร็จ",v:"≥ "+S.info.softMin,u:"คน"},
+    {l:"ผลตามวัตถุประสงค์ 3",v:c.scored?(ok?"ผ่าน":"ตรวจสอบ"):"–",pill:c.scored?(ok?"ok":"warn"):null},
+  ].map(statHTML).join('');}
+
+function addSatAspect(){S.satAspects.push("รายการใหม่");save();renderSat();}
+function renderSat(){
+  const headEl=document.getElementById('satHead'),bodyEl=document.getElementById('satBody');
+  headEl.innerHTML=`<tr><th>ผู้เรียน</th>${S.satAspects.map((n,i)=>`<th><input value="${esc(n)}" data-asp="${i}" style="width:90px;text-align:center;font-size:10px;border:1px solid var(--line);border-radius:5px;padding:3px"></th>`).join('')}<th>x̄</th><th></th></tr>`;
+  if(!S.students.length){bodyEl.innerHTML=`<tr><td colspan="${S.satAspects.length+3}" class="empty">เพิ่มรายชื่อก่อน</td></tr>`;renderSatStats();return;}
+  bodyEl.innerHTML=S.students.map((s,i)=>{const arr=S.sat[s.id]||Array(S.satAspects.length).fill("");
+    const vals=arr.filter(x=>x!==""&&x!=null).map(Number);const m=meanArr(vals);
+    return `<tr><td>${i+1}. ${esc(s.name)||'<span style="color:#9aa6a0">(ไม่ระบุ)</span>'}</td>
+      ${S.satAspects.map((_,c)=>`<td><input type="number" min="1" max="5" value="${arr[c]??""}" data-st="sat" data-id="${s.id}" data-c="${c}"></td>`).join('')}
+      <td class="num">${vals.length?m.toFixed(2):"–"}</td><td></td></tr>`;}).join('');
+  renderSatStats();
+}
+document.getElementById('satHead').addEventListener('input',e=>{if(e.target.dataset.asp!==undefined){S.satAspects[e.target.dataset.asp]=e.target.value;save();}});
+function satAll(){let arr=[];S.students.forEach(s=>(S.sat[s.id]||[]).forEach(x=>{if(x!==""&&x!=null)arr.push(Number(x));}));return arr;}
+function satByAspect(){return S.satAspects.map((n,c)=>{let a=[];S.students.forEach(s=>{const v=(S.sat[s.id]||[])[c];if(v!==""&&v!=null)a.push(Number(v));});return{name:n,m:meanArr(a)};});}
+function renderSatStats(){const all=satAll();const m=meanArr(all),sd=sdArr(all);const lv=level5(m);const ok=m>=S.info.satTarget;
+  document.getElementById('satStats').innerHTML=[
+    {l:"ค่าเฉลี่ยรวม x̄",v:all.length?m.toFixed(2):"–",u:"จาก 5.00"},
+    {l:"S.D.",v:all.length?sd.toFixed(2):"–",u:""},
+    {l:"ระดับ",v:m?lv.txt:"–",pill:m?lv.cls:null},
+    {l:"ผลตามวัตถุประสงค์ 4",v:m?(ok?"ผ่าน":"ตรวจสอบ"):"–",pill:m?(ok?"ok":"warn"):null,u:"เกณฑ์ มากขึ้นไป"},
+  ].map(statHTML).join('');}
+
+/* ===== OVERVIEW ===== */
+function stageProgress(){let d=0,t=0;STAGES.forEach(p=>(S.stages[p.k]||[]).forEach(x=>{t++;if(x.done)d++;}));return{d,t,pct:t?Math.round(d/t*100):0};}
+function renderOverview(){
+  const q=meanArr(qualAll());const c=compStats();const sf=softStats();const sat=meanArr(satAll());
+  const k=[
+    {o:"วัตถุประสงค์ 1",l:"คุณภาพนวัตกรรม",v:q?q.toFixed(2):"–",u:" /5",m:q?level5(q).txt:"ยังไม่มีข้อมูล",cls:q? (q>=S.info.satTarget?"ok":"warn"):"",c:"i"},
+    {o:"วัตถุประสงค์ 2",l:"สมรรถนะอาชีพผ่านเกณฑ์",v:c.scored?c.pctGroup.toFixed(0):"–",u:"%",m:c.passers+"/"+c.scored+" คน · เกณฑ์ ≥80%",cls:c.scored?(c.pctGroup>=80?"ok":"warn"):"",c:"o"},
+    {o:"วัตถุประสงค์ 3",l:"Soft Skills ดีขึ้นไป",v:sf.scored?sf.good:"–",u:" คน",m:"เกณฑ์ ≥"+S.info.softMin+" คน",cls:sf.scored?(sf.good>=S.info.softMin?"ok":"warn"):"",c:"g"},
+    {o:"วัตถุประสงค์ 4",l:"ความพึงพอใจ",v:sat?sat.toFixed(2):"–",u:" /5",m:sat?level5(sat).txt:"ยังไม่มีข้อมูล",cls:sat?(sat>=S.info.satTarget?"ok":"warn"):"",c:"w"},
+  ];
+  document.getElementById('kpis').innerHTML=k.map(x=>`<div class="kpi ${x.c}"><div class="ko">${x.o}</div><div class="kl">${x.l}</div>
+    <div class="kv">${x.v}<small>${x.u}</small></div><div class="km" style="color:${x.cls==='ok'?'var(--ok)':x.cls==='warn'?'var(--warn)':'var(--ink-soft)'}">${x.m}</div></div>`).join('');
+  const pr=stageProgress();drawRing(pr.pct);document.getElementById('ringPct').textContent=pr.pct+"%";
+  document.getElementById('ringMeta').textContent=pr.t?`เสร็จ ${pr.d}/${pr.t} งาน`:"—";
+  document.getElementById('phaselist').innerHTML=STAGES.map(p=>{const ts=S.stages[p.k]||[],dn=ts.filter(t=>t.done).length,pc=ts.length?Math.round(dn/ts.length*100):0;
+    return `<div class="prow"><div class="pchip" style="background:${p.c}">${p.n}</div><div style="flex:1"><div style="font-size:12px;font-weight:600">${p.th}</div><div class="pbar"><i style="width:${pc}%;background:${p.c}"></i></div></div><div class="pmeta">${dn}/${ts.length}</div></div>`;}).join('');
+  // objective summary
+  const objs=[
+    {n:1,t:S.info.obj1,r:q?`ผลที่ได้ x̄ = ${q.toFixed(2)} (${level5(q).txt})`:"ยังไม่มีข้อมูล",ok:q&&q>=S.info.satTarget},
+    {n:2,t:S.info.obj2,r:c.scored?`ผ่านเกณฑ์ ${c.passers}/${c.scored} คน (${c.pctGroup.toFixed(0)}%)`:"ยังไม่มีข้อมูล",ok:c.scored&&c.pctGroup>=80},
+    {n:3,t:S.info.obj3,r:sf.scored?`ดีขึ้นไป ${sf.good} คน (เกณฑ์ ≥${S.info.softMin})`:"ยังไม่มีข้อมูล",ok:sf.scored&&sf.good>=S.info.softMin},
+    {n:4,t:S.info.obj4,r:sat?`ความพึงพอใจ x̄ = ${sat.toFixed(2)} (${level5(sat).txt})`:"ยังไม่มีข้อมูล",ok:sat&&sat>=S.info.satTarget},
+  ];
+  document.getElementById('objSummary').innerHTML=objs.map(o=>`<div class="obj"><div class="objn" style="background:${o.ok?'var(--ok)':'var(--ink-soft)'}">${o.n}</div>
+    <div class="objbody"><div class="objt">${esc(o.t)}</div><div class="objr">${o.r} ${o.ok?'<span class="pill ok">บรรลุ</span>':''}</div></div></div>`).join('');
+}
+function drawRing(pct){const svg=document.getElementById('ring'),r=66,cx=80,cy=80,c=2*Math.PI*r;
+  svg.innerHTML=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#E6ECE8" stroke-width="13"/>
+  <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="url(#g)" stroke-width="13" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-pct/100)}" transform="rotate(-90 ${cx} ${cy})"/>
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1A6B4C"/><stop offset="1" stop-color="#B6852C"/></linearGradient></defs>`;}
+
+/* ===== ANALYZE charts ===== */
+function bar(name,val,max,color,label,crit){const pct=Math.max(0,Math.min(val/max*100,100));
+  return `<div class="brow"><span class="bn">${esc(name)}</span><div class="btrack"><i style="width:${pct}%;background:${color}">${label}</i>${crit!=null?`<span class="critmark" style="left:${crit/max*100}%"></span>`:''}</div></div>`;}
+function renderAnalysis(){
+  // competency %
+  const cc=document.getElementById('chartComp');const cs=S.students.map((s,i)=>{const v=(S.comp[s.id]||[]).filter(x=>x!==""&&x!=null).map(Number);const tot=v.reduce((a,b)=>a+b,0);return{name:(i+1)+'. '+(s.name||'—'),pct:v.length?tot/S.info.fullComp*100:0,has:v.length};});
+  cc.innerHTML=cs.some(x=>x.has)?cs.map(x=>bar(x.name,x.pct,100,x.pct>=S.info.critComp?'var(--ok)':'var(--warn)',x.has?x.pct.toFixed(0)+'%':'',S.info.critComp)).join(''):'<div class="empty">ยังไม่มีข้อมูล</div>';
+  // soft total/20
+  const sc=document.getElementById('chartSoft');const ss=S.students.map((s,i)=>{const v=(S.soft[s.id]||[]).filter(x=>x!==""&&x!=null).map(Number);const tot=v.reduce((a,b)=>a+b,0);return{name:(i+1)+'. '+(s.name||'—'),tot,has:v.length};});
+  sc.innerHTML=ss.some(x=>x.has)?ss.map(x=>bar(x.name,x.tot,S.info.fullSoft,x.tot>=S.info.softPass?'var(--green)':'var(--warn)',x.has?x.tot:'',S.info.softPass)).join(''):'<div class="empty">ยังไม่มีข้อมูล</div>';
+  // quality by group
+  const qc=document.getElementById('chartQual');const groups=[];let cur=null;
+  QUAL_ITEMS.forEach((it,idx)=>{if(it.g){cur={name:it.g,vals:[]};groups.push(cur);}else if(cur){(S.qual[idx]||[]).forEach(x=>{if(x!==""&&x!=null)cur.vals.push(Number(x));});}});
+  qc.innerHTML=groups.some(g=>g.vals.length)?groups.map(g=>{const m=meanArr(g.vals);return bar(g.name.replace(/^\d+\.\s*/,''),m,5,'var(--info)',m?m.toFixed(2):'');}).join(''):'<div class="empty">ยังไม่มีข้อมูล</div>';
+  // satisfaction by aspect
+  const stc=document.getElementById('chartSat');const sa=satByAspect();
+  stc.innerHTML=sa.some(a=>a.m)?sa.map(a=>bar(a.name,a.m,5,'var(--gold)',a.m?a.m.toFixed(2):'')).join(''):'<div class="empty">ยังไม่มีข้อมูล</div>';
+}
+
+/* ===== REPORT ===== */
+function renderReport(){const i=S.info;const q=meanArr(qualAll()),qsd=sdArr(qualAll());const c=compStats();const sf=softStats();const sat=meanArr(satAll()),ssd=sdArr(satAll());
+  const oks=[q>=i.satTarget,c.scored&&c.pctGroup>=80,sf.scored&&sf.good>=i.softMin,sat>=i.satTarget];
+  document.getElementById('reportCard').innerHTML=`
+    <div class="eyebrow">บทสรุปผลงานเพื่อ คศ.4</div>
+    <h2 style="font-size:17px;line-height:1.35;margin-bottom:6px">${esc(i.title)}</h2>
+    <div class="sub">${esc(i.author)} · ${esc(i.position)}<br>${esc(i.school)} · ${esc(i.affil)}<br>รายวิชา ${esc(i.subject)} · ${esc(i.level)} · ${esc(i.activity)}</div>
+    <div class="hr"></div>
+    <div class="obj"><div class="objn" style="background:${oks[0]?'var(--ok)':'var(--ink-soft)'}">1</div><div class="objbody"><div class="objt">คุณภาพนวัตกรรม (ผู้เชี่ยวชาญ 3 ท่าน)</div><div class="objr">x̄ = ${q?q.toFixed(2):'–'}, S.D. = ${q?qsd.toFixed(2):'–'} → ระดับ ${q?level5(q).txt:'–'} ${oks[0]?'<span class="pill ok">บรรลุ</span>':''}</div></div></div>
+    <div class="obj"><div class="objn" style="background:${oks[1]?'var(--ok)':'var(--ink-soft)'}">2</div><div class="objbody"><div class="objt">สมรรถนะอาชีพด้านการผลิตพืช</div><div class="objr">ผ่านเกณฑ์ร้อยละ 80 จำนวน ${c.passers}/${c.scored} คน (${c.scored?c.pctGroup.toFixed(0):'–'}%) ${oks[1]?'<span class="pill ok">บรรลุ</span>':''}</div></div></div>
+    <div class="obj"><div class="objn" style="background:${oks[2]?'var(--ok)':'var(--ink-soft)'}">3</div><div class="objbody"><div class="objt">ทักษะ Soft Skills</div><div class="objr">ระดับดีขึ้นไป ${sf.good} คน (เกณฑ์ ≥${i.softMin} คน) ${oks[2]?'<span class="pill ok">บรรลุ</span>':''}</div></div></div>
+    <div class="obj"><div class="objn" style="background:${oks[3]?'var(--ok)':'var(--ink-soft)'}">4</div><div class="objbody"><div class="objt">ความพึงพอใจของผู้เรียน</div><div class="objr">x̄ = ${sat?sat.toFixed(2):'–'}, S.D. = ${sat?ssd.toFixed(2):'–'} → ระดับ ${sat?level5(sat).txt:'–'} ${oks[3]?'<span class="pill ok">บรรลุ</span>':''}</div></div></div>
+    <div class="note">ค่าทุกตัวคำนวณสดจากข้อมูลที่กรอก ปรับคะแนนแล้วสรุปนี้อัพเดททันที · กด “พิมพ์/บันทึก PDF” ด้านล่างเพื่อแนบผลงาน</div>`;
+}
+
+/* export/import */
+function exportJSON(){const blob=new Blob([JSON.stringify(S,null,2)],{type:"application/json"});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download="stemgrow-"+new Date().toISOString().slice(0,10)+".json";a.click();}
+function importJSON(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);S=Object.assign(blank(),d);S.info=Object.assign(blank().info,d.info||{});S.stages=Object.assign(defaultStages(),d.stages||{});save();hydrate();renderAll();alert("นำเข้าสำเร็จ");}catch(e){alert("ไฟล์ไม่ถูกต้อง");}};r.readAsText(f);}
+function resetAll(){if(!confirm("ล้างข้อมูลทั้งหมดและกลับเป็นค่าตั้งต้น STEM–GROW? (แนะนำสำรองก่อน)"))return;S=blank();save();hydrate();renderAll();}
+
+/* helpers */
+function esc(s){return String(s??"").replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function shortItem(n){return esc(String(n).replace(/^\d+\.\s*/,'').slice(0,16));}
+function meanArr(a){return a.length?a.reduce((x,y)=>x+y,0)/a.length:0;}
+function sdArr(a){if(a.length<2)return 0;const m=meanArr(a);return Math.sqrt(a.reduce((x,y)=>x+(y-m)**2,0)/(a.length-1));}
+function level5(m){if(!m||isNaN(m))return{txt:"–",cls:"warn"};if(m>=4.51)return{txt:"มากที่สุด",cls:"ok"};if(m>=3.51)return{txt:"มาก",cls:"ok"};if(m>=2.51)return{txt:"ปานกลาง",cls:"warn"};if(m>=1.51)return{txt:"น้อย",cls:"bad"};return{txt:"น้อยที่สุด",cls:"bad"};}
+function statHTML(s){return `<div class="stat"><div class="sl">${s.l}</div><div class="sv">${s.pill?`<span class="pill ${s.pill}">${s.v}</span>`:s.v}${s.u&&!s.pill?` <small>${s.u}</small>`:''}</div>${s.pill&&s.u?`<div class="sl" style="margin-top:4px">${s.u}</div>`:''}</div>`;}
+function fmtD(d){if(!d)return"";const p=d.split('-');return p.length===3?`${p[2]}/${p[1]}/${(+p[0]+543)%100}`:d;}
+
+function renderAll(){renderStudents();renderTrack();renderLogStageOpts();renderLog();renderQual();renderComp();renderSoft();renderSat();renderOverview();}
+
+document.getElementById('logDate').value=new Date().toISOString().slice(0,10);
+load();
+</script>
+</body>
+</html>
